@@ -9,7 +9,8 @@ class Placement {
 
   Placement(this.name, [this.subplacement = ""]);
 
-  static namedUndefined1(String name, {Widget? child, WidgetBuilder? builder}) {
+  static Provider<Placement> namedUndefined1(String name,
+      {Widget? child, WidgetBuilder? builder}) {
     assert(child != null || builder != null);
 
     Widget inner() => (builder != null)
@@ -24,7 +25,7 @@ class Placement {
         create: (_) => Placement(modifiedName + "_UNDEFINED"), child: inner());
   }
 
-  static named(String name,
+  static Provider<Placement> named(String name,
       {String subplacement = "", Widget? child, WidgetBuilder? builder}) {
     assert(child != null || builder != null);
 

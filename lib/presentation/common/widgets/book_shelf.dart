@@ -300,7 +300,7 @@ class ShakerAnimation extends CompoundAnimation<double> {
   }
 
   @override
-  get value {
+  double get value {
     if (!_isStarted) {
       return stoppedAnimation.value;
     }

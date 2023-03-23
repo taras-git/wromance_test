@@ -1,3 +1,5 @@
+// ignore_for_file: comment_references
+
 import 'package:flutter/material.dart';
 import 'package:womanly_mobile/domain/entities/book.dart';
 import 'package:womanly_mobile/presentation/misc/analytics/analytics.dart';
