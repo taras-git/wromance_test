@@ -58,7 +58,7 @@ class ListenButton extends StatelessWidget {
     final isNeedToSubscribe = false;
     final isStarted = false;
 
-    bool borderedStyle = false;
+    bool borderedStyle = true;
 
     Color labelColor = Colors.white;
     if (borderedStyle) {

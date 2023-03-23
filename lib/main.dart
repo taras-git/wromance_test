@@ -54,7 +54,7 @@ void main() async {
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
-  final testBook = BookModel.fromJson(jsonDecode(jsonTestBook))!;
+  final testBook = BookModel.fromJson(jsonDecode(jsonTestBook2))!;
 
   @override
   Widget build(BuildContext context) {
