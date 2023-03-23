@@ -8,14 +8,12 @@ import 'package:womanly_mobile/domain/data_repository.dart';
 import 'package:womanly_mobile/domain/entities/book.dart';
 import 'package:womanly_mobile/domain/entities/enums/featured_style.dart';
 import 'package:womanly_mobile/domain/entities/featured.dart';
-import 'package:womanly_mobile/domain/entities/series.dart';
 import 'package:womanly_mobile/domain/library_state.dart';
 import 'package:womanly_mobile/presentation/common/widgets/authors_and_narrators.dart';
 import 'package:womanly_mobile/presentation/common/widgets/book_cover.dart';
 import 'package:womanly_mobile/presentation/common/widgets/book_peppers.dart';
 import 'package:womanly_mobile/presentation/common/widgets/book_shelf.dart';
 import 'package:womanly_mobile/presentation/common/widgets/featured/featured_books.dart';
-import 'package:womanly_mobile/presentation/common/widgets/featured/featured_small_sceleton.dart';
 import 'package:womanly_mobile/presentation/common/widgets/mini_player_placeholder.dart';
 import 'package:womanly_mobile/presentation/common/widgets/my_list_button.dart';
 import 'package:womanly_mobile/presentation/common/widgets/sample_button.dart';
@@ -27,12 +25,12 @@ import 'package:womanly_mobile/presentation/misc/config/remote_config.dart';
 import 'package:womanly_mobile/presentation/misc/experiments.dart';
 import 'package:womanly_mobile/presentation/misc/expiration_timer/expiration_timer_settings.dart';
 import 'package:womanly_mobile/presentation/misc/extensions.dart';
-import 'package:womanly_mobile/presentation/screens/product/widgets/custom_divider.dart';
-import 'package:womanly_mobile/presentation/screens/product/widgets/positioned_spot_light.dart';
 import 'package:womanly_mobile/presentation/screens/product/product_state.dart';
+import 'package:womanly_mobile/presentation/screens/product/widgets/custom_divider.dart';
 import 'package:womanly_mobile/presentation/screens/product/widgets/description_text_widget.dart';
 import 'package:womanly_mobile/presentation/screens/product/widgets/listen_button.dart';
 import 'package:womanly_mobile/presentation/screens/product/widgets/listen_button_container.dart';
+import 'package:womanly_mobile/presentation/screens/product/widgets/positioned_spot_light.dart';
 import 'package:womanly_mobile/presentation/screens/product/widgets/press_button.dart';
 import 'package:womanly_mobile/presentation/theme/theme_colors.dart';
 import 'package:womanly_mobile/presentation/theme/theme_text_style.dart';
@@ -91,11 +89,19 @@ class _ProductScreenBodyState extends State<ProductScreenBody> {
   @override
   void initState() {
     super.initState();
-    scrollController.addListener(() => _updateListenButtonPosition(context,
-        scrollController.offset, widget.book.isSharingEmotionsEnabled));
+    scrollController.addListener(
+      () => _updateListenButtonPosition(
+        context,
+        scrollController.offset,
+        widget.book.isSharingEmotionsEnabled,
+      ),
+    );
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _updateListenButtonPosition(
-          context, 0, widget.book.isSharingEmotionsEnabled);
+        context,
+        0,
+        widget.book.isSharingEmotionsEnabled,
+      );
     });
   }
 
@@ -139,19 +145,15 @@ class _ProductScreenBodyState extends State<ProductScreenBody> {
       BuildContext context, double offset, bool isSharingEmotions) {
     final dataRepository = context.read<DataRepository>();
     final prefs = context.read<SharedPreferences>();
-    final Series? series = dataRepository.getSeries(widget.book);
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double minPosition =
-        MediaQuery.of(context).padding.top + _appBarHeight;
-    double limit = MediaQuery.of(context).padding.top +
+    final series = dataRepository.getSeries(widget.book);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final minPosition = MediaQuery.of(context).padding.top + _appBarHeight;
+    var limit = MediaQuery.of(context).padding.top +
         _headersAdditionalTopPadding +
         (screenWidth - 2 * coverHorizontalPadding) +
         8 +
-        2 + // 16 +
+        2 +
         _tropes2linesHeight +
-        // 62 +
-        // 16 +
-        // 20;
         10 +
         (-0) +
         compensationHorizontalPadding;
@@ -169,7 +171,11 @@ class _ProductScreenBodyState extends State<ProductScreenBody> {
     }
 
     context.read<ProductState>().setButtonPosition(
-        offset, limit, minPosition, scrollController.hasClients);
+          offset,
+          limit,
+          minPosition,
+          scrollController.hasClients,
+        );
   }
 }
 
@@ -225,7 +231,11 @@ class BackBlur extends StatelessWidget {
                   ThemeColors.accentBackground.withOpacity(0.7),
                   ThemeColors.accentBackground.withOpacity(1),
                 ],
-                stops: const [0.0, 0.75, 1],
+                stops: const [
+                  0.0,
+                  0.75,
+                  1,
+                ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -245,8 +255,8 @@ class BookScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool topChips = context.watch<ProductState>().topChips;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final topChips = context.watch<ProductState>().topChips;
 
     late final bookCover = BookCover(
       book,
@@ -260,8 +270,6 @@ class BookScreenBody extends StatelessWidget {
 
     final dataRepository = context.read<DataRepository>();
     final allBooks = BookShelf.availableBooks(context, dataRepository.books);
-    final featuredMoreLikeThis =
-        context.select<ProductState, Featured?>((state) => state.moreLikeThis);
     final featuredMoreByThisAuthor = Featured(
         "More by this author",
         allBooks
@@ -280,8 +288,6 @@ class BookScreenBody extends StatelessWidget {
                 !authorBooksIds.contains(it.id))
             .toList(),
         FeaturedStyle.small);
-    final featuredDescription = Featured(
-        "Description", [], FeaturedStyle.medium); //TODO: more than 1 narrator
 
     const backImageBlur = 24.0;
 
@@ -315,30 +321,10 @@ class BookScreenBody extends StatelessWidget {
                   ),
                 ),
               Container(
-                // decoration: BoxDecoration(
-                //     borderRadius: const BorderRadius.all(Radius.circular(10)),
-                //     border: Border.all(width: 2, color: Colors.white)),
                 margin:
                     EdgeInsets.symmetric(horizontal: coverHorizontalPadding),
                 child: bookCover,
               ),
-              // if (newProduct)
-              //   Container(
-              //     margin:
-              //         EdgeInsets.symmetric(horizontal: coverHorizontalPadding),
-              //     child: BorderGradient(
-              //       strokeWidth: 0.5,
-              //       radius: 10,
-              //       gradient: LinearGradient(
-              //         colors: [
-              //           Colors.transparent,
-              //           Colors.white.withOpacity(0.5)
-              //         ],
-              //         begin: Alignment.topCenter,
-              //         end: Alignment.bottomCenter,
-              //       ),
-              //     ),
-              //   ),
               Visibility(
                 visible: topChips,
                 child: Positioned(
@@ -357,7 +343,6 @@ class BookScreenBody extends StatelessWidget {
         color:
             debugColorListenButtonPositions ? Colors.red : Colors.transparent,
         height: _tropes2linesHeight,
-        // padding: const EdgeInsets.only(bottom: 16),
         child: Align(
           alignment: Alignment.bottomCenter,
           child: ProductTropes(book),
@@ -589,12 +574,11 @@ class SpecialPriceOff extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String text = Experiments.resolveListenButtonSubtitle(context, book) ?? "";
+    var text = Experiments.resolveListenButtonSubtitle(context, book) ?? "";
 
     if (text.isEmpty) {
-      // final monetizationState = context.read<MonetizationState>();
-      final originalPriceString = "1.99";
-      final offerPriceString = "0.99";
+      const originalPriceString = "1.99";
+      const offerPriceString = "0.99";
 
       final originalPriceDouble = doublePrice(originalPriceString);
       final offerPriceDouble = doublePrice(offerPriceString);
@@ -603,7 +587,7 @@ class SpecialPriceOff extends StatelessWidget {
         return const SizedBox.shrink();
       }
 
-      int percent =
+      final percent =
           (100 * (originalPriceDouble - offerPriceDouble) / originalPriceDouble)
               .round();
 
@@ -638,10 +622,10 @@ class _TopChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<ProductState>().setColorTextChips(book);
-    final bool topChips = context.watch<ProductState>().topChips;
-    final String textChips = context.read<ProductState>().textChips;
-    final String placeChips = context.read<ProductState>().placeChips;
-    final Color colorChips = context.read<ProductState>().colorChips;
+    final topChips = context.watch<ProductState>().topChips;
+    final textChips = context.read<ProductState>().textChips;
+    final placeChips = context.read<ProductState>().placeChips;
+    final colorChips = context.read<ProductState>().colorChips;
 
     return Container(
       height: 24,
@@ -650,9 +634,7 @@ class _TopChips extends StatelessWidget {
           color: colorChips,
           borderRadius: const BorderRadius.only(
             topRight: Radius.circular(4.0),
-            bottomRight: Radius.circular(0.0),
             topLeft: Radius.circular(4.0),
-            bottomLeft: Radius.circular(0.0),
           )),
       child: Row(
         children: [
