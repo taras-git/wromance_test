@@ -130,12 +130,13 @@ extension BookX on Book {
   }
 
   String tropes(int maxCount) {
-    final List<String> tropes = [];
-    tropes.addAll(subGenres.take(maxCount));
-    tropes.addAll(topTropes.take(maxCount));
-    tropes.addAll(tags.take(maxCount));
+    final tropes = [
+      ...subGenres.take(maxCount),
+      ...topTropes.take(maxCount),
+      ...tags.take(maxCount)
+    ].take(maxCount).join(" • ");
 
-    return tropes.take(maxCount).join(" • ");
+    return tropes;
   }
 
   bool get debugIsDarkPlayerControls =>
@@ -149,7 +150,7 @@ extension BookX on Book {
       return " ";
     }
 
-    String of = "";
+    var of = "";
     if (chapter.isMainPart) {
       final chaptersMainPart = chapters.where((it) => it.isMainPart).length;
       of = " of $chaptersMainPart";
