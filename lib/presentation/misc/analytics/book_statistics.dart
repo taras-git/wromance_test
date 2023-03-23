@@ -52,7 +52,7 @@ class BookStatistics {
     updateFinishedPaidCount(state);
   }
 
-  static updateFinishedPaidCount(LibraryState state) {
+  static void updateFinishedPaidCount(LibraryState state) {
     Log.stub();
   }
 

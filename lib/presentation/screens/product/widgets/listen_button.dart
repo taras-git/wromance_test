@@ -307,7 +307,7 @@ class GradientSkewRotation extends GradientTransform {
 
   @override
   Matrix4 transform(Rect bounds, {TextDirection? textDirection}) {
-    assert(bounds != null);
+    // assert(bounds != null);
     final double sinRadians = sin(radians);
     final double oneMinusCosRadians = 1 - cos(radians);
     final Offset center = bounds.center;
