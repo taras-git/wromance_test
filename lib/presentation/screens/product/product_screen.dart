@@ -44,7 +44,7 @@ final double coverHorizontalPadding = newProduct ? 16 : 27.5;
 final double compensationHorizontalPadding = newProduct ? 15 : 0;
 
 const bool debugColorListenButtonPositions = false;
-const bool debugHideListenButton = false;
+const bool debugHideListenButton = true;
 
 class ProductScreen extends StatelessWidget {
   final Book book;
@@ -183,12 +183,12 @@ class BackBlur extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const backImageBlur = 20.0;
-    final double screenWidth = MediaQuery.of(context).size.width;
+    const backImageBlur = 10.0;
+    final screenWidth = MediaQuery.of(context).size.width;
     final buttonPosition =
         context.select<ProductState, double>((state) => state.buttonPosition);
-    final double imageSize = screenWidth * 1.35;
-    final double positionLeft = -(imageSize - screenWidth) / 2;
+    final imageSize = screenWidth * 1.35;
+    final positionLeft = -(imageSize - screenWidth) / 2;
     var positionTop = -imageSize + buttonPosition;
     if (buttonPosition > imageSize) {
       positionTop = 0;
@@ -216,18 +216,21 @@ class BackBlur extends StatelessWidget {
           height: imageSize + 30,
           top: positionTop,
           child: Container(
-              width: screenWidth,
-              height: 158,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [
-                ThemeColors.accentBackground.withOpacity(0.7),
-                ThemeColors.accentBackground.withOpacity(0.7),
-                ThemeColors.accentBackground.withOpacity(1),
-              ], stops: const [
-                0.0,
-                0.75,
-                1
-              ], begin: Alignment.topCenter, end: Alignment.bottomCenter))),
+            width: screenWidth,
+            height: 158,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  ThemeColors.accentBackground.withOpacity(0.7),
+                  ThemeColors.accentBackground.withOpacity(0.7),
+                  ThemeColors.accentBackground.withOpacity(1),
+                ],
+                stops: const [0.0, 0.75, 1],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -364,7 +367,7 @@ class BookScreenBody extends StatelessWidget {
       SeriesButton(book),
       SpecialPriceContainer(book),
       Container(
-        margin: EdgeInsets.only(top: (false) ? 40 : 0),
+        margin: EdgeInsets.only(top: (true) ? 40 : 0),
         color:
             debugColorListenButtonPositions ? Colors.pink : Colors.transparent,
         padding: const EdgeInsets.only(top: 18, bottom: 16 - 4),
