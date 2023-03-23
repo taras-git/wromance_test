@@ -488,18 +488,74 @@ class ProductTropes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const tropesCount = 7;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: newProduct ? 30 : 16),
-      child: Text(
-        book.tropes(5),
-        textAlign: TextAlign.center,
-        style: newProduct
-            ? ThemeTextStyle.s15w400.copyWith(color: const Color(0xB3FFFFFF))
-            : ThemeTextStyle.s14w400.copyWith(
-                color: const Color(0xB3FFFFFF),
-              ),
-        maxLines: 2,
+      child: DisplayFixOverflowTropes(
+        book: book,
+        tropesCount: tropesCount,
       ),
+    );
+  }
+}
+
+class DisplayFixOverflowTropes extends StatelessWidget {
+  const DisplayFixOverflowTropes({
+    Key? key,
+    required this.book,
+    required this.tropesCount,
+  }) : super(key: key);
+
+  final Book book;
+  final int tropesCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (
+        context,
+        size,
+      ) {
+        final textSpan = TextSpan(
+          text: book.tropes(tropesCount),
+          style: newProduct
+              ? ThemeTextStyle.s15w400.copyWith(color: const Color(0xB3FFFFFF))
+              : ThemeTextStyle.s14w400.copyWith(
+                  color: const Color(0xB3FFFFFF),
+                ),
+        );
+
+        // Use a textpainter to determine if it will exceed max lines
+        final textPainter = TextPainter(
+          maxLines: 2,
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr,
+          text: textSpan,
+        );
+        // trigger it to layout
+        textPainter.layout(maxWidth: size.maxWidth);
+        // whether the text overflowed or not
+        final tropesOverflowDetected = textPainter.didExceedMaxLines;
+
+        if (tropesOverflowDetected) {
+          // recurcive Widget, reduce Tropes count by 1 if there is an overflow detected
+          return DisplayFixOverflowTropes(
+            book: book,
+            tropesCount: tropesCount - 1,
+          );
+        } else {
+          return Text(
+            book.tropes(tropesCount),
+            textAlign: TextAlign.center,
+            style: newProduct
+                ? ThemeTextStyle.s15w400
+                    .copyWith(color: const Color(0xB3FFFFFF))
+                : ThemeTextStyle.s14w400.copyWith(
+                    color: const Color(0xB3FFFFFF),
+                  ),
+          );
+        }
+      },
     );
   }
 }
