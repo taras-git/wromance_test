@@ -518,11 +518,7 @@ class DisplayFixOverflowTropes extends StatelessWidget {
       ) {
         final textSpan = TextSpan(
           text: book.tropes(tropesCount),
-          style: newProduct
-              ? ThemeTextStyle.s15w400.copyWith(color: const Color(0xB3FFFFFF))
-              : ThemeTextStyle.s14w400.copyWith(
-                  color: const Color(0xB3FFFFFF),
-                ),
+          style: tropesStyle(),
         );
 
         // Use a textpainter to determine if it will exceed max lines
@@ -547,16 +543,19 @@ class DisplayFixOverflowTropes extends StatelessWidget {
           return Text(
             book.tropes(tropesCount),
             textAlign: TextAlign.center,
-            style: newProduct
-                ? ThemeTextStyle.s15w400
-                    .copyWith(color: const Color(0xB3FFFFFF))
-                : ThemeTextStyle.s14w400.copyWith(
-                    color: const Color(0xB3FFFFFF),
-                  ),
+            style: tropesStyle(),
           );
         }
       },
     );
+  }
+
+  TextStyle tropesStyle() {
+    return newProduct
+        ? ThemeTextStyle.s15w400.copyWith(color: const Color(0xB3FFFFFF))
+        : ThemeTextStyle.s14w400.copyWith(
+            color: const Color(0xB3FFFFFF),
+          );
   }
 }
 
